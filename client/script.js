@@ -1,62 +1,117 @@
 const socket = io('http://localhost:3000');
 
-const ordersDiv = document.getElementById('orders');
+const ordersDiv =
+  document.getElementById('orders');
+
+const emptyState =
+  document.getElementById('empty-state');
 
 const ordersMap = new Map();
 
-socket.on('connect', () => {
-  console.log('Connected to backend socket');
-});
+function renderOrders() {
 
-socket.on('order_update', (payload) => {
+  ordersDiv.innerHTML = '';
 
-  console.log('Realtime Update:', payload);
+  if (ordersMap.size === 0) {
 
-  const operation = payload.operation;
-  const order = payload.data;
-
-  if (operation === 'DELETE') {
-
-    const existingCard = document.getElementById(`order-${order.id}`);
-
-    if (existingCard) {
-      existingCard.remove();
-    }
-
-    ordersMap.delete(order.id);
+    emptyState.style.display = 'flex';
 
     return;
   }
 
-  let card = document.getElementById(`order-${order.id}`);
+  emptyState.style.display = 'none';
 
-  if (!card) {
+  const orders = Array.from(
+    ordersMap.values()
+  ).sort((a, b) => a.id - b.id);
 
-    card = document.createElement('div');
+  orders.forEach((order) => {
+
+    const card =
+      document.createElement('div');
 
     card.className = 'order-card';
 
-    card.id = `order-${order.id}`;
+    card.innerHTML = `
 
-    ordersDiv.prepend(card);
+      <h2>Order #${order.id}</h2>
+
+      <div>
+
+        <p>
+          <strong>Customer:</strong>
+          ${order.customer_name}
+        </p>
+
+        <p>
+          <strong>Product:</strong>
+          ${order.product_name}
+        </p>
+
+        <p class="status ${order.status}">
+          ${order.status}
+        </p>
+
+        <p>
+          <strong>Updated:</strong>
+          ${new Date(
+            order.updated_at
+          ).toLocaleString()}
+        </p>
+
+      </div>
+
+    `;
+
+    ordersDiv.appendChild(card);
+  });
+}
+
+socket.on(
+  'order_update',
+  (payload) => {
+
+    const order = payload.data;
+
+    if (
+      payload.operation === 'DELETE'
+    ) {
+
+      ordersMap.delete(order.id);
+
+    } else {
+
+      ordersMap.set(order.id, order);
+    }
+
+    renderOrders();
   }
+);
 
-  card.innerHTML = `
-    <h2>Order #${order.id}</h2>
+async function loadOrders() {
 
-    <p><strong>Customer:</strong> ${order.customer_name}</p>
+  try {
 
-    <p><strong>Product:</strong> ${order.product_name}</p>
+    const response = await fetch(
+      'http://localhost:3000/api/orders'
+    );
 
-    <p class="status ${order.status}">
-    <strong>Status:</strong> ${order.status}
-    </p>
+    const orders = await response.json();
 
-    <p>
-  <strong>Updated:</strong>
-  ${new Date(order.updated_at).toLocaleString()}
-</p>
-  `;
+    orders.forEach((order) => {
 
-  ordersMap.set(order.id, order);
-});
+      ordersMap.set(order.id, order);
+    });
+
+    renderOrders();
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load orders:',
+      error
+    );
+  }
+}
+
+loadOrders();

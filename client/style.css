@@ -1,30 +1,203 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background: #111827;
-    color: white;
+
+  font-family: 'Inter', sans-serif;
+
+  background: #020617;
+
+  color: #f8fafc;
+
+  min-height: 100vh;
+}
+
+.dashboard-container {
+
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  padding: 48px 32px 80px;
+}
+
+.top-bar {
+
+  margin-bottom: 56px;
+}
+
+.tag {
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  letter-spacing: 1.2px;
+
+  text-transform: uppercase;
+
+  color: #64748b;
+
+  margin-bottom: 14px;
+}
+
+.top-bar h1 {
+
+  font-size: 54px;
+
+  font-weight: 700;
+
+  letter-spacing: -2px;
+
+  color: #f8fafc;
+}
+
+.orders-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(300px, 300px));
+
+  gap: 24px;
+}
+
+.order-card {
+
+  background: #0f172a;
+
+  border: 1px solid #1e293b;
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  min-height: 280px;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.order-card:hover {
+
+  transform: translateY(-2px);
+
+  border-color: #334155;
+}
+
+.order-card h2 {
+
+  font-size: 34px;
+
+  margin-bottom: 24px;
+
+  letter-spacing: -1px;
+}
+
+.order-card p {
+
+  font-size: 16px;
+
+  color: #cbd5e1;
+
+  margin-bottom: 14px;
+
+  line-height: 1.5;
+}
+
+.status {
+
+  margin-top: 20px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+}
+
+.pending {
+  color: #facc15;
+}
+
+.shipped {
+  color: #38bdf8;
+}
+
+.delivered {
+  color: #22c55e;
+}
+
+#empty-state {
+
+  min-height: 55vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+}
+
+.empty-icon {
+
+  font-size: 52px;
+
+  margin-bottom: 20px;
+
+  opacity: 0.9;
+}
+
+#empty-state h2 {
+
+  font-size: 21px;
+
+  margin-bottom: 12px;
+
+  letter-spacing: -1px;
+}
+
+#empty-state p {
+
+  font-size: 16px;
+
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+
+  .dashboard-container {
+
+    padding: 32px 20px 60px;
   }
-  
-  .container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
+
+  .top-bar h1 {
+
+    font-size: 40px;
   }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 40px;
+
+  .orders-grid {
+
+    grid-template-columns: 1fr;
   }
-  
+
   .order-card {
-    background: #1f2937;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+
+    width: 100%;
   }
-  
-  .status {
-    color: #22c55e;
-    font-weight: bold;
+
+  #empty-state h2 {
+
+    font-size: 30px;
   }
+}
