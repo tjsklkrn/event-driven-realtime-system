@@ -48,8 +48,11 @@ function renderOrders() {
           ${order.product_name}
         </p>
 
-        <p class="status ${order.status}">
+        <p>
+          <strong>Status:</strong>
+          <span class="status ${order.status}">
           ${order.status}
+          </span>
         </p>
 
         <p>

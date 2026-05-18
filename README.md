@@ -1,155 +1,172 @@
-Tejas Kulkarni APT Assignment — Realtime Database Updates System
+# Tejas Kulkarni APT Assignment - Realtime Database Update System
 
-A production-style realtime backend system built using Node.js, PostgreSQL, Socket.IO, and PostgreSQL LISTEN/NOTIFY.
+A production-level real-time backend system implemented with Node.js, PostgreSQL, Socket.IO, and PostgreSQL LISTEN/NOTIFY.
 
-This project demonstrates how database changes can be propagated instantly to connected clients without relying on inefficient polling mechanisms. Whenever an order is created, updated, or deleted in the PostgreSQL database, connected frontend clients receive live updates automatically through WebSockets.
+This system illustrates how any change in the database could be instantly reflected on connected clients without the need for ineffective polling. When an order is added, updated or deleted from the PostgreSQL database, connected frontend clients get instant updates from the server via WebSockets.
 
-The system is designed using an event-driven architecture similar to those used in trading systems, realtime dashboards, and notification platforms.
+It has been designed with a reactive architecture style used in many trading systems and notification services.
 
-⸻
+---
 
-Tech Stack
+# Tech Stack
 
-Technology	Purpose
-Node.js	Backend runtime
-Express.js	REST API server
-PostgreSQL	Relational database
-Socket.IO	Realtime WebSocket communication
-LISTEN / NOTIFY	PostgreSQL pub/sub mechanism
-HTML/CSS/JavaScript	Frontend client
-Postman	API testing
+- Node.js → Backend runtime  
+- Express.js → REST API server  
+- PostgreSQL → Relational database  
+- Socket.IO → Realtime WebSocket communication  
+- LISTEN / NOTIFY → PostgreSQL pub/sub mechanism  
+- HTML/CSS/JavaScript → Frontend client  
+- Postman → API testing  
 
-⸻
+---
 
-Project Overview
+# Project Description
 
-The system contains an orders table in PostgreSQL. Any database operation such as:
+The project has a table called `orders` in PostgreSQL. Every time there is a database action, including:
 
-* INSERT
-* UPDATE
-* DELETE
+- Insertion,
+- Update,
+- Deletion,
 
-triggers a PostgreSQL notification event.
+a PostgreSQL notification event occurs.
 
-The backend continuously listens to these events using PostgreSQL LISTEN/NOTIFY and broadcasts updates to all connected clients through Socket.IO in realtime.
+The backend listens to these events using PostgreSQL `LISTEN/NOTIFY` and sends notifications to all connected clients via Socket.IO.
 
-This eliminates the need for clients to repeatedly poll the backend for updates.
+Therefore, there will be no need for clients to continually poll the server for new information.
 
-⸻
+---
 
-System Architecture
+# Why This Architecture
 
-Postman / Frontend
-        ↓
-REST API Requests
-        ↓
-Node.js + Express Backend
-        ↓
-PostgreSQL Database
-        ↓
-Database Trigger
-        ↓
-LISTEN / NOTIFY
-        ↓
-Socket.IO WebSocket Server
-        ↓
-Realtime Frontend Updates
+I have selected PostgreSQL LISTEN/NOTIFY along with Socket.IO as against polling due to its ability to deliver low latency and reduce unwanted calls to the APIs and database.
 
-⸻
+The architecture is highly scalable for moderate real-time workloads and fits well with architectures typically employed in real-time trading applications and monitoring dashboards.
 
-Folder Structure
+---
+
+# System Architecture
+
+Postman / Frontend  
+↓  
+REST API Requests  
+↓  
+Node.js + Express Backend  
+↓  
+PostgreSQL Database  
+↓  
+Database Trigger  
+↓  
+LISTEN / NOTIFY  
+↓  
+Socket.IO WebSocket Server  
+↓  
+Realtime Frontend Updates  
+
+---
+
+# Folder Structure
 
 tejas-apt-assignment/
-│
-├── architecture.png
-├── README.md
-├── assets/
-│
-├── client/
-│   ├── index.html
-│   ├── script.js
-│   └── style.css
-│
-├── server/
-│   ├── package.json
-│   ├── .env
-│   │
-│   └── src/
-│       ├── app.js
-│       │
-│       ├── controllers/
-│       │   └── orderController.js
-│       │
-│       ├── routes/
-│       │   └── orderRoutes.js
-│       │
-│       ├── db/
-│       │   └── database.js
-│       │
-│       ├── listeners/
-│       ├── services/
-│       ├── sockets/
-│       └── utils/
 
-⸻
+├── architecture.png  
+├── README.md  
+├── client/  
+│   ├── index.html  
+│   ├── script.js  
+│   └── style.css  
+│  
+├── server/  
+│   ├── package.json  
+│   ├── .env.example  
+│   │  
+│   └── src/  
+│       ├── app.js  
+│       │  
+│       ├── controllers/  
+│       │   └── orderController.js  
+│       │  
+│       ├── routes/  
+│       │   └── orderRoutes.js  
+│       │  
+│       ├── db/  
+│       │   └── database.js  
+│       │  
+│       ├── listeners/  
+│       ├── services/  
+│       ├── sockets/  
+│       └── utils/  
 
-Features
+---
 
-* Realtime database update propagation
-* PostgreSQL trigger-based events
-* WebSocket communication using Socket.IO
-* RESTful CRUD APIs
-* INSERT / UPDATE / DELETE realtime synchronization
-* Event-driven architecture
-* Live frontend updates without page refresh
-* Scalable push-based communication
-* Professional modular backend structure
+# Features
 
-⸻
+- Realtime database update propagation
+- PostgreSQL trigger-based events
+- WebSocket communication using Socket.IO
+- RESTful CRUD APIs
+- INSERT / UPDATE / DELETE realtime synchronization
+- Event-driven architecture
+- Live frontend updates without page refresh
+- Scalable push-based communication
+- Professional modular backend structure
 
-Setup Instructions
+---
 
-1. Clone Repository
+# Setup Instructions
 
+## 1. Clone Repository
+
+```
 git clone <repository-url>
 cd tejas-apt-assignment
+```
 
-⸻
+---
 
-2. Install Backend Dependencies
+## 2. Install Backend Dependencies
 
+```
 cd server
 npm install
+```
 
-⸻
+---
 
-3. Configure Environment Variables
+## 3. Configure Environment Variables
 
-Create .env inside server/
+Create `.env` inside `server/`
 
+```
 PORT=3000
+
 DB_USER=postgres
 DB_HOST=localhost
 DB_NAME=apt_realtime
 DB_PASSWORD=
 DB_PORT=5432
+```
 
-⸻
+---
 
-4. Start PostgreSQL
+## 4. Start PostgreSQL
 
+```
 brew services start postgresql@16
+```
 
-⸻
+---
 
-5. Create Database
+## 5. Create Database
 
+```
 CREATE DATABASE apt_realtime;
+```
 
-⸻
+---
 
-6. Create Orders Table
+## 6. Create Orders Table
 
+```
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     customer_name VARCHAR(255),
@@ -157,16 +174,19 @@ CREATE TABLE orders (
     status VARCHAR(50),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+```
 
-⸻
+---
 
-7. Create Trigger Function
+## 7. Create Trigger Function
 
+```
 CREATE OR REPLACE FUNCTION notify_order_change()
 RETURNS trigger AS $$
 DECLARE
   payload JSON;
 BEGIN
+
   IF TG_OP = 'DELETE' THEN
     payload = json_build_object(
       'operation', TG_OP,
@@ -178,216 +198,275 @@ BEGIN
       'data', row_to_json(NEW)
     );
   END IF;
+
   PERFORM pg_notify(
     'orders_channel',
     payload::text
   );
+
   IF TG_OP = 'DELETE' THEN
     RETURN OLD;
   ELSE
     RETURN NEW;
   END IF;
+
 END;
 $$ LANGUAGE plpgsql;
+```
 
-⸻
+---
 
-8. Create Trigger
+## 8. Create Trigger
 
+```
 CREATE TRIGGER orders_trigger
 AFTER INSERT OR UPDATE OR DELETE
 ON orders
 FOR EACH ROW
 EXECUTE FUNCTION notify_order_change();
+```
 
-⸻
+---
 
-9. Start Backend Server
+## 9. Start Backend Server
 
+```
 npm run dev
+```
 
-⸻
+---
 
-10. Run Frontend
+## 10. Run Frontend
 
-Open client/index.html using Live Server.
+You can run the frontend using any local static server.
 
-⸻
+### Option 1 — VS Code / Cursor Live Server Extension
 
-API Endpoints
+- Install the “Live Server” extension
+- Open `client/index.html`
+- Right click → “Open with Live Server”
 
-Get All Orders
+---
 
+### Option 2 — Python Simple HTTP Server
+
+If Python is installed:
+
+```
+cd client
+python3 -m http.server 5500
+```
+
+Then open:
+
+```
+http://localhost:5500
+```
+
+in the browser.
+
+---
+
+# API Testing Using Postman
+
+This project uses Postman to test REST APIs and validate realtime updates.
+
+## Download Postman
+
+https://www.postman.com/downloads/
+
+---
+
+## Example API Requests
+
+### Get All Orders
+
+```
 GET /api/orders
+```
 
-⸻
+---
 
-Create Order
+### Create Order
 
+```
 POST /api/orders
+```
 
-Request Body
+#### Request Body
 
+```
 {
-  "customer_name": "Rahul",
+  "customer_name": "Tejas",
   "product_name": "MacBook Pro",
   "status": "pending"
 }
+```
 
-⸻
+---
 
-Update Order
+### Update Order
 
+```
 PUT /api/orders/:id
+```
 
-Request Body
+#### Request Body
 
+```
 {
   "status": "delivered"
 }
+```
 
-⸻
+---
 
-Delete Order
+### Delete Order
 
+```
 DELETE /api/orders/:id
+```
 
-⸻
+---
 
-Realtime Flow Explanation
+# Realtime Flow Explanation
 
-Step 1 — API Request
+## Step 1 — API Request
 
 A user creates or updates an order through REST APIs.
 
-⸻
+---
 
-Step 2 — Database Change
+## Step 2 — Database Change
 
-PostgreSQL updates the orders table.
+PostgreSQL updates the `orders` table.
 
-⸻
+---
 
-Step 3 — Trigger Fires
+## Step 3 — Trigger Fires
 
 The database trigger automatically executes and sends a realtime notification using:
 
+```
 pg_notify()
+```
 
-⸻
+---
 
-Step 4 — Backend Listener
+## Step 4 — Backend Listener
 
 Node.js continuously listens to:
 
+```
 LISTEN orders_channel;
+```
 
-⸻
+---
 
-Step 5 — WebSocket Broadcast
+## Step 5 — WebSocket Broadcast
 
 The backend broadcasts the event using Socket.IO:
 
+```
 io.emit('order_update', payload);
+```
 
-⸻
+---
 
-Step 6 — Frontend Updates Instantly
+## Step 6 — Frontend Updates Instantly
 
 Connected clients receive updates immediately without refreshing the page.
 
-⸻
+---
 
-Why Polling Is Inefficient
+# Why Polling is Inefficient
 
-Traditional polling requires clients to repeatedly send API requests at fixed intervals.
+In traditional polling, clients have to continuously send API calls at regular intervals.
 
 Example:
 
 Client → API → Database (every 2 seconds)
 
-Problems with polling:
+Challenges with polling include:
 
-* High database load
-* Wasted API requests
-* Increased latency
-* Poor scalability
-* Unnecessary network traffic
+- Heavy database load
+- Inefficient use of API calls
+- Higher latency
+- Poor scalability
+- Excess network traffic
 
-This project uses a push-based architecture instead:
+In this project, we implement a push system as follows:
 
-Database Change → Event → WebSocket Push → Client
+Database change → Event → WebSocket push → Client
 
-Benefits:
+Advantages:
 
-* Lower latency
-* Efficient resource usage
-* Instant updates
-* Better scalability
-* Reduced server load
+- Low latency
+- Efficient resource utilization
+- Real-time data updates
+- Scalability
+- Low server load
 
-⸻
+---
 
-Scalability Discussion
+# Scalability Section
 
-The current implementation uses PostgreSQL LISTEN/NOTIFY which works well for moderate-scale realtime systems.
+Scalability can be achieved through the following mechanisms for a large-scale production environment:
 
-For very large-scale production systems, the architecture can be extended using:
+- Redis Pub/Sub
+- Kafka
+- Debezium CDC
+- WebSocket Gateways
+- Horizontal Scaling of Backend Servers
+- Load Balancers
 
-* Redis Pub/Sub
-* Kafka
-* Debezium CDC
-* WebSocket Gateways
-* Horizontal backend scaling
-* Load balancers
-
-Example enterprise architecture:
+Enterprise architecture example:
 
 PostgreSQL
-    ↓
+↓
 Kafka / Redis
-    ↓
-Realtime Event Service
-    ↓
+↓
+Real-time Event Service
+↓
 Socket.IO Gateway Cluster
-    ↓
+↓
 Clients
 
-⸻
+---
 
-Future Improvements
+# Future Enhancements
 
-* Authentication & Authorization
-* Docker support
-* Kubernetes deployment
-* Redis caching
-* Persistent WebSocket sessions
-* Order filtering & search
-* Frontend framework integration (React/Next.js)
-* API rate limiting
-* Monitoring & logging
-* Message queues for high throughput
-* CI/CD pipelines
-* SSL/TLS support
-* Unit & integration testing
+- Authentication and Authorization
+- Support for Docker
+- Kubernetes Deployment
+- Redis caching
+- Persistent WebSocket connections
+- Filtering of Orders
+- Integration with React/Next.js frontend frameworks
+- Rate limiting of APIs
+- Monitoring and logging
+- Queuing messages for high throughput
+- CI/CD Pipelines
+- SSL/TLS support
+- Unit and integration tests
 
-⸻
+---
 
-Key Learning Outcomes
+# Important Learnings
 
-This project demonstrates:
+This project showcases the following:
 
-* Realtime backend architecture
-* Event-driven systems
-* PostgreSQL triggers
-* LISTEN / NOTIFY
-* WebSocket communication
-* REST API development
-* Full-stack synchronization
-* Scalable backend design patterns
+- Realtime backend implementation
+- Event-driven approach
+- PostgresSQL triggers
+- LISTEN / NOTIFY
+- WebSocket connection
+- REST API design
+- Fullstack synchronization
+- Patterns for scalable backends
 
-⸻
+---
 
-Author
+# Author
 
 Tejas Kulkarni

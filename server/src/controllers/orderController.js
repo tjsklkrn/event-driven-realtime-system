@@ -30,6 +30,18 @@ const createOrder = async (req, res) => {
       status,
     } = req.body;
 
+    if (
+      !customer_name ||
+      !product_name ||
+      !status
+    ) {
+
+      return res.status(400).json({
+        error:
+          'customer_name, product_name and status are required',
+      });
+    }
+
     const result = await db.query(
       `
       INSERT INTO orders (
@@ -65,16 +77,29 @@ const updateOrder = async (req, res) => {
 
     const { id } = req.params;
 
-    const { status } = req.body;
+    const {
+      customer_name,
+      product_name,
+      status,
+    } = req.body;
 
     const result = await db.query(
       `
       UPDATE orders
-      SET status = $1
-      WHERE id = $2
+      SET
+        customer_name = COALESCE($1, customer_name),
+        product_name = COALESCE($2, product_name),
+        status = COALESCE($3, status),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $4
       RETURNING *
       `,
-      [status, id]
+      [
+        customer_name,
+        product_name,
+        status,
+        id,
+      ]
     );
 
     res.json(result.rows[0]);
