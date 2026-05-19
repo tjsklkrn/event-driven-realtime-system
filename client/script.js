@@ -1,5 +1,3 @@
-const socket = io('http://localhost:3000');
-
 const ordersDiv =
   document.getElementById('orders');
 
@@ -50,8 +48,9 @@ function renderOrders() {
 
         <p>
           <strong>Status:</strong>
+
           <span class="status ${order.status}">
-          ${order.status}
+            ${order.status}
           </span>
         </p>
 
@@ -70,28 +69,7 @@ function renderOrders() {
   });
 }
 
-socket.on(
-  'order_update',
-  (payload) => {
-
-    const order = payload.data;
-
-    if (
-      payload.operation === 'DELETE'
-    ) {
-
-      ordersMap.delete(order.id);
-
-    } else {
-
-      ordersMap.set(order.id, order);
-    }
-
-    renderOrders();
-  }
-);
-
-async function loadOrders() {
+async function fetchOrders() {
 
   try {
 
@@ -100,6 +78,8 @@ async function loadOrders() {
     );
 
     const orders = await response.json();
+
+    ordersMap.clear();
 
     orders.forEach((order) => {
 
@@ -111,10 +91,24 @@ async function loadOrders() {
   } catch (error) {
 
     console.error(
-      'Failed to load orders:',
+      'Failed to fetch orders:',
       error
     );
   }
 }
 
-loadOrders();
+const eventSource = new EventSource(
+  'http://localhost:3000/events'
+);
+
+eventSource.onmessage = (event) => {
+
+  console.log(
+    'SSE Event:',
+    event.data
+  );
+
+  fetchOrders();
+};
+
+fetchOrders();
