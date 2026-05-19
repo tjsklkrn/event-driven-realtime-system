@@ -1,114 +1,72 @@
-// require('dotenv').config();
-
-// const express = require('express');
-// const http = require('http');
-// const cors = require('cors');
-// const { Server } = require('socket.io');
-
-// const pool = require('./db/database');
-// const orderRoutes = require('./routes/orderRoutes');
-
-// const app = express();
-
-// app.use(cors());
-// app.use(express.json());
-// app.use('/api/orders', orderRoutes);
-
-// const server = http.createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: '*',
-//   },
-// });
-
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-
-//   socket.on('disconnect', () => {
-//     console.log('Client disconnected');
-//   });
-// });
-
-// pool.query('LISTEN orders_channel')
-//   .then(() => {
-//     console.log('Listening to orders_channel');
-//   })
-//   .catch((err) => {
-//     console.error('LISTEN error:', err);
-//   });
-
-// pool.on('notification', (msg) => {
-//   console.log('Realtime DB Event:', msg.payload);
-
-//   io.emit('order_update', JSON.parse(msg.payload));
-// });
-
-// app.get('/', (req, res) => {
-//   res.send('Realtime Backend Running');
-// });
-
-// const PORT = process.env.PORT || 3000;
-
-// server.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-
 require('dotenv').config();
 
 const express = require('express');
-const http = require('http');
 const cors = require('cors');
-const { Server } = require('socket.io');
 
-const pool = require('./db/database');
+const orderRoutes =
+  require('./routes/orderRoutes');
 
-const orderRoutes = require('./routes/orderRoutes');
+const {
+  addClient,
+  removeClient,
+} = require('./sse/sseManager');
+
+const {
+  initializePostgresListener,
+} = require(
+  './listeners/postgresListener'
+);
 
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
 app.use('/api/orders', orderRoutes);
 
-const server = http.createServer(app);
+app.get('/events', (req, res) => {
 
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-  },
-});
+  res.setHeader(
+    'Content-Type',
+    'text/event-stream'
+  );
 
-io.on('connection', (socket) => {
-  console.log('Client connected');
+  res.setHeader(
+    'Cache-Control',
+    'no-cache'
+  );
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
+  res.setHeader(
+    'Connection',
+    'keep-alive'
+  );
+
+  res.flushHeaders();
+
+  addClient(res);
+
+  req.on('close', () => {
+
+    removeClient(res);
   });
-});
-
-pool.query('LISTEN orders_channel')
-  .then(() => {
-    console.log('Listening to orders_channel');
-  })
-  .catch((err) => {
-    console.error('LISTEN error:', err);
-  });
-
-pool.on('notification', (msg) => {
-
-  console.log('Realtime DB Event:', msg.payload);
-
-  io.emit('order_update', JSON.parse(msg.payload));
 });
 
 app.get('/', (req, res) => {
-  res.send('Realtime Backend Running');
+
+  res.send(
+    'Realtime SSE Backend Running'
+  );
 });
 
-const PORT = process.env.PORT || 3000;
+initializePostgresListener();
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const PORT =
+  process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+
+  console.log(
+    `Server running on port ${PORT}`
+  );
 });
